@@ -1,6 +1,6 @@
 @file:Suppress("MagicNumber")
 
-private const val DAY = "01"
+private const val DAY = "03"
 
 private const val PART1_CHECK = 0
 private const val PART2_CHECK = 0
