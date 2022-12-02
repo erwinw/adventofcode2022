@@ -2,8 +2,8 @@
 
 private const val DAY = "01"
 
-private const val PART1_CHECK = 24000
-private const val PART2_CHECK = 45000
+private const val PART1_CHECK = 0
+private const val PART2_CHECK = 0
 
 fun main() {
     fun part1(input: List<String>): Int {
