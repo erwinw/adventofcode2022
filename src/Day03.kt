@@ -2,17 +2,37 @@
 
 private const val DAY = "03"
 
-private const val PART1_CHECK = 0
-private const val PART2_CHECK = 0
+private const val PART1_CHECK = 157
+private const val PART2_CHECK = 70
+
+fun String.toCompartments(): List<String> =
+    (length / 2).let {
+        listOf(take(it), drop(it))
+    }
+
+fun itemPriority(item: Char): Int =
+    when (item) {
+        in 'a'..'z' -> item.code - 'a'.code + 1
+        in 'A'..'Z' -> item.code - 'A'.code + 27
+        else -> throw IllegalArgumentException("Item '${item}' out of range")
+    }
 
 fun main() {
-    fun part1(input: List<String>): Int {
-        return input.size
-    }
+    fun part1(input: List<String>): Int =
+        input.sumOf { ruckSack ->
+            ruckSack.toCompartments()
+                .map(String::toSet)
+                .reduce(Iterable<Char>::intersect)
+                .sumOf(::itemPriority)
+        }
 
-    fun part2(input: List<String>): Int {
-        return input.size
-    }
+    fun part2(input: List<String>): Int =
+        input.chunked(3)
+            .sumOf { rucksacks ->
+                rucksacks.map(String::toSet)
+                    .reduce(Iterable<Char>::intersect)
+                    .sumOf(::itemPriority)
+            }
 
     println("Day $DAY")
     // test if implementation meets criteria from the description, like:
