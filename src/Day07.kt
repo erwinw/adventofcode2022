@@ -116,7 +116,7 @@ fun main() {
             .filter { it.size >= missingSpace }
             .minByOrNull { it.size }
         println("To delete: ${toDelete?.size} (${toDelete?.path()})")
-        
+
         return toDelete?.size ?: 0
     }
 
