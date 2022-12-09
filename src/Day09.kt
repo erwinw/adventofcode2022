@@ -109,7 +109,7 @@ private fun part2(input: List<String>): Int {
                 'U' -> Pair(0, 1)
                 else -> throw IllegalArgumentException("Unexpected direction $direction")
             }
-        
+
         repeat(amount) {
             head.x += dx
             head.y += dy
