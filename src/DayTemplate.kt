@@ -15,7 +15,6 @@ fun main() {
     }
 
     println("Day $DAY")
-    // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day${DAY}_test")
     check(part1(testInput).also { println("Part1 output: $it") } == PART1_CHECK)
     check(part2(testInput).also { println("Part2 output: $it") } == PART2_CHECK)
