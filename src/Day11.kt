@@ -2,66 +2,66 @@
 
 private const val DAY = "11"
 
-private val PART1_CHECK = 10605L
-private val PART2_CHECK = 2713310158L
+private const val PART1_CHECK = 10605L
+private const val PART2_CHECK = 2713310158L
 
-private data class Monkey(
-    val id: Int,
-    var items: MutableList<Long>,
-    val operation: (Long) -> Long,
-    val divisor: Long,
-    val trueTargetMonkey: Int,
-    val falseTargetMonkey: Int,
-    var inspectedCount: Long = 0L,
-) {
-    fun inspectAndThrowAll(monkeys: List<Monkey>, relief: Int, commonDivisor: Long = 1) {
-        inspectedCount += items.size
-        // println("  Items: ${items.size}")
-        items.removeAll { item ->
-            true.also {
-                val inspectionResult = operation(item)
-                val postRelief = if (relief != 1) {
-                    inspectionResult / relief
-                } else {
-                    inspectionResult % commonDivisor
+fun main() {
+    data class Monkey(
+        val id: Int,
+        var items: MutableList<Long>,
+        val operation: (Long) -> Long,
+        val divisor: Long,
+        val trueTargetMonkey: Int,
+        val falseTargetMonkey: Int,
+        var inspectedCount: Long = 0L,
+    ) {
+        fun inspectAndThrowAll(monkeys: List<Monkey>, relief: Int, commonDivisor: Long = 1) {
+            inspectedCount += items.size
+            // println("  Items: ${items.size}")
+            items.removeAll { item ->
+                true.also {
+                    val inspectionResult = operation(item)
+                    val postRelief = if (relief != 1) {
+                        inspectionResult / relief
+                    } else {
+                        inspectionResult % commonDivisor
+                    }
+                    val targetMonkeyId =
+                        if (postRelief % divisor == 0L) trueTargetMonkey else falseTargetMonkey
+                    // println("  Item: $item -> $inspectionResult -> $postRelief; thrown to $targetMonkeyId")
+                    val targetMonkey = monkeys[targetMonkeyId]
+                    targetMonkey.items.add(postRelief)
                 }
-                val targetMonkeyId =
-                    if (postRelief % divisor == 0L) trueTargetMonkey else falseTargetMonkey
-                // println("  Item: $item -> $inspectionResult -> $postRelief; thrown to $targetMonkeyId")
-                val targetMonkey = monkeys[targetMonkeyId]
-                targetMonkey.items.add(postRelief)
             }
         }
     }
-}
 
-private fun parseOperation(opString: String): (Long) -> Long =
-    when {
-        opString == "* old" -> ({ it * it })
-        opString.first() == '*' -> {
-            val operand = opString.drop(2).toLong()
-            ({ it * operand })
+    fun parseOperation(opString: String): (Long) -> Long =
+        when {
+            opString == "* old" -> ({ it * it })
+            opString.first() == '*' -> {
+                val operand = opString.drop(2).toLong()
+                ({ it * operand })
+            }
+
+            opString.first() == '+' -> {
+                val operand = opString.drop(2).toLong()
+                ({ it + operand })
+            }
+
+            else -> throw IllegalArgumentException("Unsupported opString: $opString")
         }
 
-        opString.first() == '+' -> {
-            val operand = opString.drop(2).toLong()
-            ({ it + operand })
-        }
+    fun parseMonkey(input: List<String>) =
+        Monkey(
+            id = input[0].drop(7).dropLast(1).toInt(),
+            items = input[1].drop(18).split(", ").map(String::toLong).toMutableList(),
+            operation = parseOperation(input[2].drop(23)),
+            divisor = input[3].drop(21).toLong(),
+            trueTargetMonkey = input[4].drop(29).toInt(),
+            falseTargetMonkey = input[5].drop(30).toInt(),
+        )
 
-        else -> throw IllegalArgumentException("Unsupported opString: $opString")
-    }
-
-private fun parseMonkey(input: List<String>) =
-    Monkey(
-        id = input[0].drop(7).dropLast(1).toInt(),
-        items = input[1].drop(18).split(", ").map(String::toLong).toMutableList(),
-        operation = parseOperation(input[2].drop(23)),
-        divisor = input[3].drop(21).toLong(),
-        trueTargetMonkey = input[4].drop(29).toInt(),
-        falseTargetMonkey = input[5].drop(30).toInt(),
-    )
-
-fun main() {
     fun part1(input: List<String>): Long {
         val monkeys = input.chunked(7).map(::parseMonkey)
         val commonDivisor = monkeys.map { it.divisor }.reduce { acc, i -> acc * i }
